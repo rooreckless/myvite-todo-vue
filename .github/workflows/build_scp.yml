@@ -1,0 +1,57 @@
+name: Build vue & SCP transcfer files to EC2
+
+on:
+  push:
+
+jobs:
+  scpupload:
+    runs-on: ubuntu-latest
+
+    steps:
+      #このymlが使われるリポジトリをチェックアウトします
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: build vue
+        run: |
+          cd my-vite-todo
+          npm install
+          npm run build
+      # ファイルを指定したディレクトリに移動
+      - name: Copy files to target directory
+        run: |
+          mkdir html
+          cp -R my-vite-todo/dist/* html
+
+      # EC2インスタンス上のターゲットディレクトリを事前に削除
+      - name: Remove target directory on EC2 & Set permissions
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASS }}
+          script: |
+            sudo rm -rf /usr/share/nginx/html
+            sudo chmod -R 777 /usr/share/nginx
+
+      #チェックアウトしたリポジトリ内のmy-vite-todo/index.htmlをEC2の/tmpにアップロードします
+      - name: Upload files by SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASS }}
+          source: "html"
+          target: "/usr/share/nginx"
+      - name: Reset permissions on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASS }}
+          script: sudo chmod -R 755 /usr/share/nginx
