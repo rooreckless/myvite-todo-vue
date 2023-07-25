@@ -44,7 +44,7 @@ export const useTodoList=()=>{
       //→その中のtodos_listだけを取り出してreturnしPromiseResultに詰める
       const resjson=await res.json()
       console.log("resjson.todos_list=")
-      console.log(await resjson.todos_list)
+      console.log(resjson.todos_list)
       return await resjson.todos_list
       //呼び出した側はawait でこの関数を呼び出せば、PromiseResultが取り出せます
     }catch(e){
