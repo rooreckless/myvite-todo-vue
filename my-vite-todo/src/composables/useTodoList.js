@@ -39,7 +39,7 @@ export const useTodoList=()=>{
       console.log("--onmount_alltask--res=")
       console.log(res)
       console.log("res.json()=")
-      console.log(res.json())
+      console.log(await res.json())
       //fetch結果の本文のみ抽出しJSON化
       //→その中のtodos_listだけを取り出してreturnしPromiseResultに詰める
       const resjson=await res.json()
