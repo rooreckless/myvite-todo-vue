@@ -45,7 +45,7 @@ export const useTodoList=()=>{
       console.log(resjson)
       console.log("resjson.todos_list=")
       console.log(resjson.todos_list)
-      return await resjson.todos_list
+      return resjson.todos_list
       //呼び出した側はawait でこの関数を呼び出せば、PromiseResultが取り出せます
     }catch(e){
       console.log("error---")
