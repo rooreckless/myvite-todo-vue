@@ -33,8 +33,10 @@ export const useTodoList=()=>{
   
   //-fetchを使い、全件flaskのalltaskを呼び出す----------------
   const onmount_alltask = async()=>{
+    console.log("--onmount_alltask--")
     try{
       const res = await fetch("/back_app/alltask")
+      console.log("--onmount_alltask--res="+res)
       //fetch結果の本文のみ抽出しJSON化
       //→その中のtodos_listだけを取り出してreturnしPromiseResultに詰める
       const resjson=await res.json()
